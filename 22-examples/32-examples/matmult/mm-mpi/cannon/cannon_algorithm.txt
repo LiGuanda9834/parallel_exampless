@@ -1,0 +1,54 @@
+Procedure cannon
+ Input N, Pr, Pc
+ lcm = the lest common multiple of Pr and Pc
+ if (N%lcm != 0)
+   return;
+ n_row = lcm/Pr
+ n_col = lcm/Pc
+
+ Alignment:
+ for all A(i, j) (0<i<lcm, 0<=j<lcm) do 
+    s = u = i	   
+    t = (j-i)<0 ? lcm+j-i : j-i
+    v = (i+j)>=lcm ? i+j-lcm : i+j
+    set_dest_source_proc (s, t, u, v)
+    shift (A, i, j, s, t, u, v)
+ end for
+
+ for all B(i, j) (0<=i<lcm, 0<j<lcm) do
+    t = v = j	  
+    s = (i-j)<0 ? lcm+i-j : i-j
+    u = (i+j)>=lcm? i+j-lcm : i+j
+    set_dest_source_proc (s, t, u, v)
+    shift (B, i, j, s, t, u, v)
+ end for
+
+ Multiply:
+ for loop = 1 to lcm do
+    C(i, j) += A(i, j)*B(i, j) (0<=i, j<lcm)
+    for all A(i, j) (0<=i<lcm, 0<=j<lcm) do
+        s = u = i
+	t = (j=0) ? lcm-1:j-1
+	v = (j=lcm-1) ? 0: j+1
+	set_dest_source_proc (s, t, u, v)
+	shift (A, i, j, s, t, u, v)
+    endfor  
+    for B(i, j) (0<=i<lcm, 0<=j<lcm) do
+        t = v = j
+	s = (i=0) ? lcm-1 : i-1
+	u = (i=lcm-1) ? 0 : i+1
+	set_dest_source_proc (s, t, u, v)
+	shift (B, i, j, s, t, u, v)
+    end for	
+ end for
+end Procedure
+
+Procedure set_dest_source_proc (s, t, u, v)
+  dest_proc = Pc*(s/n_row) + t/n_col
+  source_proc = Pc*(u/n_row) + v/n_col
+end Procedure
+
+Procedure shift (Mat, i, j, s, t, u, v)
+ Mat(s, t)<--Mat(i, j)
+ Mat(i, j)<--Mat(u, v)
+end Procedure
